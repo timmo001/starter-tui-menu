@@ -57,6 +57,7 @@ const program = Effect.gen(function* () {
       screenMode: "alternate-screen",
       useMouse: false,
       backgroundColor: theme.bg,
+      onDestroy: () => process.exit(0),
     }),
   );
   log("Renderer created");
