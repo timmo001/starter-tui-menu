@@ -1,3 +1,5 @@
+import { Effect } from "effect";
+
 /** Semantic colour tokens for the TUI */
 export interface Theme {
   /** App background */
@@ -50,3 +52,11 @@ export const DEFAULT_THEME: Theme = {
   yellow: "#f9e2af",
   transparent: false,
 };
+
+/**
+ * Load the application theme.
+ *
+ * Currently returns the hardcoded default. Replace with `Effect.try` +
+ * `Effect.orElseSucceed` to load a dynamic palette from disk.
+ */
+export const loadTheme: Effect.Effect<Theme> = Effect.succeed(DEFAULT_THEME);

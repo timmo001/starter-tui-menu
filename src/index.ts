@@ -1,7 +1,9 @@
-import { Effect } from "effect";
+import { Effect, Layer, Stream } from "effect";
 import { createCliRenderer } from "@opentui/core";
 import { createCommandRunner } from "./services/CommandRunner.js";
-import { DEFAULT_THEME } from "./theme.js";
+import { SystemInfo } from "./services/SystemInfo.js";
+import { Watcher } from "./services/Watcher.js";
+import { loadTheme } from "./theme.js";
 import { Toast } from "./tui/Toast.js";
 import { App } from "./tui/App.js";
 import { parseFlags, resolveSubcommand, printHelp } from "./flags.js";
@@ -41,10 +43,12 @@ if (flags.subcommand) {
   }
 }
 
-const theme = DEFAULT_THEME;
-
 const program = Effect.gen(function* () {
+  const theme = yield* loadTheme;
   log("Starting...");
+
+  // Resolve the Watcher service from the provided layer
+  const watcher = yield* Watcher;
 
   log("Creating renderer...");
   const renderer = yield* Effect.promise(() =>
@@ -71,6 +75,19 @@ const program = Effect.gen(function* () {
   );
   log("App created");
 
+  // Subscribe to the watcher stream and log state updates.
+  // Replace the Effect.sync body with view updates when adding richer views.
+  yield* watcher.subscribe().pipe(
+    Stream.runForEach((state) =>
+      Effect.sync(() => {
+        log(
+          `Watcher tick: ${state.snapshot.hostname} / ${state.snapshot.loadAvg}`,
+        );
+      }),
+    ),
+    Effect.forkScoped,
+  );
+
   // Set terminal tab title
   process.stdout.write("\x1b]0;Starter TUI\x07");
 
@@ -82,9 +99,19 @@ const program = Effect.gen(function* () {
   yield* Effect.never;
 });
 
+// ---------------------------------------------------------------------------
+// Layer composition & launch
+// ---------------------------------------------------------------------------
+
+const MainLayer = Watcher.layer.pipe(
+  Layer.provideMerge(SystemInfo.layer),
+);
+
+const runnable = program.pipe(Effect.scoped, Effect.provide(MainLayer));
+
 log("Launching...");
 
-Effect.runPromise(program).catch((err) => {
+Effect.runPromise(runnable).catch((err) => {
   log(`Fatal error: ${err}`);
   console.error(err);
   process.exit(1);
