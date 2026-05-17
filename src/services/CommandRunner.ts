@@ -38,7 +38,9 @@ export function createCommandRunner(
         await proc.exited;
 
         if (wait) {
-          process.stdout.write("\n\x1b[90mPress any key to continue...\x1b[0m");
+          process.stdout.write(
+            "\n\n\x1b[90mPress any key to continue...\x1b[0m\n",
+          );
           await new Promise<void>((resolve) => {
             const wasRaw = process.stdin.isRaw;
             if (process.stdin.isTTY) process.stdin.setRawMode(true);
