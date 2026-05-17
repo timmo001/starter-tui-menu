@@ -94,7 +94,3 @@ Register submenus in the `submenus` and `submenuTitles` maps, and call `register
 - **TUI framework**: [@opentui/core](https://github.com/ArcticGlacier/opentui)
 - **Effect system**: [Effect](https://effect.website) v4
 - **Fuzzy search**: [Fuse.js](https://www.fusejs.io/)
-
-## License
-
-MIT
