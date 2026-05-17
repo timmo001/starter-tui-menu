@@ -9,6 +9,11 @@ import { VariantPopup } from "./VariantPopup.js";
 
 const log = (msg: string) => console.error(`[starter-tui:App] ${msg}`);
 
+/** Set the terminal tab/window title via an OSC escape sequence */
+const setTerminalTitle = (title: string): void => {
+  process.stdout.write(`\x1b]0;${title}\x07`);
+};
+
 export interface AppOptions {
   /** Which view to start on (default: "main") */
   readonly initialView?: ViewId;
@@ -39,10 +44,12 @@ export class App {
   private variantPopup: VariantPopup;
   private activeView: ViewId = "main";
   private viewStack: ViewId[] = [];
+  private appTitle: string;
 
   constructor(deps: AppDeps, options: AppOptions = {}) {
     this.renderer = deps.renderer;
     this.commandRunner = deps.commandRunner;
+    this.appTitle = options.title ?? "Starter TUI";
 
     // --- Create views ---
 
@@ -57,6 +64,10 @@ export class App {
       onAction: (item) => this.handleMenuAction(item),
       onBack: () => this.popView(),
       rootTitle: options.title ?? "Menu",
+      onTitleChange: (parts) => {
+        const suffix = parts.slice(1).join(" \u203A ");
+        setTerminalTitle(`${this.appTitle} \u203A ${suffix}`);
+      },
     });
 
     this.variantPopup = new VariantPopup(deps.renderer, deps.theme, {
@@ -154,12 +165,14 @@ export class App {
     // Show the target and reset filter state (fresh view entry)
     switch (viewId) {
       case "main":
+        setTerminalTitle(this.appTitle);
         this.mainMenu.setVisible(true);
         this.mainMenu.resetAndFocus();
         break;
       case "submenu":
         this.submenuView.setVisible(true);
         this.submenuView.resetAndFocus();
+        // SubmenuView updates the terminal title itself via onTitleChange
         break;
     }
   }

@@ -89,9 +89,6 @@ const program = Effect.gen(function* () {
     Effect.forkScoped,
   );
 
-  // Set terminal tab title
-  process.stdout.write("\x1b]0;Starter TUI\x07");
-
   log("Starting renderer...");
   renderer.start();
   log("Renderer started — TUI is live");

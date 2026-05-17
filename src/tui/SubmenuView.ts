@@ -30,6 +30,8 @@ export interface SubmenuViewOptions {
   readonly onBack: () => void;
   /** Root title for the breadcrumb trail (e.g. the app name) */
   readonly rootTitle?: string;
+  /** Called when the submenu changes so the terminal title can be updated */
+  readonly onTitleChange?: (titleParts: readonly string[]) => void;
 }
 
 /**
@@ -162,6 +164,9 @@ export class SubmenuView {
     // Update title
     this.titleText.content = this.formatTitle();
 
+    // Notify parent of title change for terminal tab title
+    this.callbacks.onTitleChange?.(this.getTitleParts());
+
     // Reset filter bar (new menu = no filter)
     this.filterBar.content = t`${fg(this.theme.fgSubtle)("/")}`;
 
@@ -204,6 +209,11 @@ export class SubmenuView {
   }
 
   private formatTitle() {
+    return formatBreadcrumb(this.theme, this.getTitleParts());
+  }
+
+  /** Build the plain-text breadcrumb segments for the current submenu depth */
+  private getTitleParts(): string[] {
     const parts = [this.rootTitle];
 
     for (const menuId of this.menuStack) {
@@ -219,7 +229,7 @@ export class SubmenuView {
       }
     }
 
-    return formatBreadcrumb(this.theme, parts);
+    return parts;
   }
 
   /** Remove the submenu view from the render tree */
