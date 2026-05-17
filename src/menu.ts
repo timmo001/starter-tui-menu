@@ -68,7 +68,7 @@ const mainItems: readonly MenuItem[] = [
         action: cmd("echo '🦘 G'\\''day mate!' && sleep 1"),
       },
     ],
-    ["hello", "hi", "welcome"],
+    ["hello", "hi", "welcome", ":hi", "hey", "wave"],
   ),
 
   item(
@@ -78,7 +78,7 @@ const mainItems: readonly MenuItem[] = [
     "Display system information",
     cmd("uname -a"),
     undefined,
-    ["uname", "os", "kernel"],
+    ["uname", "os", "kernel", "sys", "sysinfo", ":si"],
   ),
 
   item(
@@ -99,7 +99,7 @@ const mainItems: readonly MenuItem[] = [
         action: cmd("ps aux --sort=-%mem | head -11"),
       },
     ],
-    ["ps", "cpu", "memory", "top"],
+    ["ps", "cpu", "memory", "top", "htop", "proc", ":ps", ":top"],
   ),
 
   item(
@@ -109,7 +109,7 @@ const mainItems: readonly MenuItem[] = [
     "Configuration and preferences",
     submenu("settings"),
     undefined,
-    ["config", "preferences", "options"],
+    ["config", "preferences", "options", ":set", "prefs", "opts", "cfg"],
   ),
 
   item(
@@ -123,10 +123,18 @@ const mainItems: readonly MenuItem[] = [
       success: "All done!",
     }),
     undefined,
-    ["toast", "notification"],
+    ["toast", "notification", "notify", ":notify", "alert"],
   ),
 
-  item("quit", "󰩈", "Quit", "Exit the application", { type: "quit" }),
+  item("quit", "󰩈", "Quit", "Exit the application", { type: "quit" }, undefined, [
+    ":q",
+    ":wq",
+    ":qa",
+    "exit",
+    "quit",
+    "close",
+    "bye",
+  ]),
 ];
 
 // --- Settings submenu ---
@@ -139,7 +147,7 @@ const settingsItems: readonly MenuItem[] = [
     "Terminal display settings",
     submenu("settings.display"),
     undefined,
-    ["screen", "terminal", "monitor"],
+    ["screen", "terminal", "monitor", "disp", ":disp", "term"],
   ),
 
   item(
@@ -165,7 +173,7 @@ const settingsItems: readonly MenuItem[] = [
         action: cmd('echo "Editor: ${EDITOR:-not set}" && echo "Shell: $SHELL"'),
       },
     ],
-    ["vim", "nvim", "shell", "bash", "zsh"],
+    ["vim", "nvim", "shell", "bash", "zsh", ":e", "ed", "$EDITOR"],
   ),
 
   item(
@@ -175,7 +183,7 @@ const settingsItems: readonly MenuItem[] = [
     "Show key environment variables",
     cmd('echo "HOME=$HOME" && echo "USER=$USER" && echo "TERM=$TERM"'),
     undefined,
-    ["env", "variables", "path"],
+    ["env", "variables", "path", "vars", ":env", "$HOME", "$USER"],
   ),
 
   item(
@@ -188,6 +196,8 @@ const settingsItems: readonly MenuItem[] = [
       progress: "Resetting...",
       success: "Settings reset to defaults",
     }),
+    undefined,
+    ["reset", ":reset", "defaults", "restore"],
   ),
 ];
 
@@ -201,7 +211,7 @@ const displayItems: readonly MenuItem[] = [
     "Show terminal colour support",
     cmd("tput colors && echo 'colours supported'"),
     undefined,
-    ["colour", "palette"],
+    ["colour", "palette", "colors", ":colors", "rgb"],
   ),
 
   item(
@@ -211,7 +221,7 @@ const displayItems: readonly MenuItem[] = [
     "Print current terminal dimensions",
     cmd('echo "${COLUMNS:-?}x${LINES:-?}"'),
     undefined,
-    ["columns", "rows", "dimensions"],
+    ["columns", "rows", "dimensions", "cols", "size", ":size", "resize"],
   ),
 
   item(
@@ -238,7 +248,7 @@ const displayItems: readonly MenuItem[] = [
         ),
       },
     ],
-    ["colour", "ansi", "palette", "test"],
+    ["colour", "ansi", "palette", "test", ":test", "256", "swatches"],
   ),
 ];
 
