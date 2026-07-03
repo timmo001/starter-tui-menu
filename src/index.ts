@@ -94,7 +94,7 @@ const program = Effect.gen(function* () {
   log("Renderer started — TUI is live");
 
   // Keep alive until the process exits
-  yield* Effect.never;
+  return yield* Effect.never;
 });
 
 // ---------------------------------------------------------------------------
